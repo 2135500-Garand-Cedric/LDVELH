@@ -18,14 +18,14 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="message_bienvenu">
+       <widget class="QLabel" name="titre_intro">
         <property name="font">
          <font>
           <pointsize>24</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>Livres dont vous êtes le héro</string>
+         <string>Titre</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -33,29 +33,35 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="bouton_nouvelle_partie">
+       <widget class="QLabel" name="texte_intro">
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>100</height>
+          <height>400</height>
          </size>
         </property>
         <property name="font">
          <font>
-          <pointsize>20</pointsize>
+          <pointsize>16</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>Nouvelle Partie</string>
+         <string>Texte</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="bouton_continuer_sauvegarde">
+       <widget class="QPushButton" name="bouton_continuer">
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>100</height>
+          <height>75</height>
          </size>
         </property>
         <property name="font">
@@ -64,10 +70,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Continuer Progression</string>
-        </property>
-        <property name="autoDefault">
-         <bool>false</bool>
+         <string>Continuer</string>
         </property>
        </widget>
       </item>

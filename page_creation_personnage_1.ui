@@ -18,14 +18,20 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="message_bienvenu">
+       <widget class="QLabel" name="message_creation_personnage_1">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>200</height>
+         </size>
+        </property>
         <property name="font">
          <font>
           <pointsize>24</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>Livres dont vous êtes le héro</string>
+         <string>Création du personnage</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -33,7 +39,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="bouton_nouvelle_partie">
+       <widget class="QPushButton" name="bouton_generer_endurance">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -46,12 +52,27 @@
          </font>
         </property>
         <property name="text">
-         <string>Nouvelle Partie</string>
+         <string>Générer Endurance</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="bouton_continuer_sauvegarde">
+       <widget class="QLabel" name="label_endurance">
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Endurance:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="bouton_generer_habilete">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -64,10 +85,34 @@
          </font>
         </property>
         <property name="text">
-         <string>Continuer Progression</string>
+         <string>Générer Habileté</string>
         </property>
-        <property name="autoDefault">
-         <bool>false</bool>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_habilete">
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Habileté:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="bouton_continuer">
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Continuer</string>
         </property>
        </widget>
       </item>

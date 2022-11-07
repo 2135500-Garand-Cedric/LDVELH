@@ -18,14 +18,14 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="message_bienvenu">
+       <widget class="QLabel" name="message_quitter">
         <property name="font">
          <font>
           <pointsize>24</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>Livres dont vous êtes le héro</string>
+         <string>Que voulez-vous faire?</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -33,11 +33,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="bouton_nouvelle_partie">
+       <widget class="QPushButton" name="bouton_continuer">
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>100</height>
+          <height>80</height>
          </size>
         </property>
         <property name="font">
@@ -46,16 +46,16 @@
          </font>
         </property>
         <property name="text">
-         <string>Nouvelle Partie</string>
+         <string>Continuer</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="bouton_continuer_sauvegarde">
+       <widget class="QPushButton" name="bouton_sauvegarder_quitter">
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>100</height>
+          <height>80</height>
          </size>
         </property>
         <property name="font">
@@ -64,10 +64,25 @@
          </font>
         </property>
         <property name="text">
-         <string>Continuer Progression</string>
+         <string>Sauvegarder et quitter</string>
         </property>
-        <property name="autoDefault">
-         <bool>false</bool>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="bouton_quitter_sans_sauvegarder">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>80</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Quitter sans sauvegarder</string>
         </property>
        </widget>
       </item>

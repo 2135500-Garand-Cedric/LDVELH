@@ -18,22 +18,25 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="message_bienvenu">
+       <widget class="QLabel" name="message_selection_livre">
         <property name="font">
          <font>
           <pointsize>24</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>Livres dont vous êtes le héro</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Selectionnez le livre dont vous &lt;/p&gt;&lt;p&gt;voulez être le héro&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="bouton_nouvelle_partie">
+       <widget class="QComboBox" name="combobox_selection_livre">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -44,34 +47,28 @@
          <font>
           <pointsize>20</pointsize>
          </font>
-        </property>
-        <property name="text">
-         <string>Nouvelle Partie</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="bouton_continuer_sauvegarde">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>100</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>20</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Continuer Progression</string>
-        </property>
-        <property name="autoDefault">
-         <bool>false</bool>
         </property>
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QPushButton" name="bouton_selectionner_livre">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>100</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Selectionner</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
