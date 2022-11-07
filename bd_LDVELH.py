@@ -6,7 +6,3 @@ db_config = {
     'password' : '',
     'database' : 'LDVELH'
 }
-
-def get_livres():
-    query = """
-        select nom
