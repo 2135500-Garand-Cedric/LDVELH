@@ -1,5 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox
+import random
 # Importer chaque page
 from Pages_PY.PageBienvenu import Ui_PageBienvenu
 from Pages_PY.PageSauvegarde import Ui_PageSauvegarde
@@ -95,6 +96,20 @@ class PageCreationPersonnage1(QMainWindow, Ui_PageCreationPersonnage1):
         self.bouton_continuer.clicked.connect(
             lambda checked: page_principale.afficher_fenetre(page_principale.page_creation_personnage_2, self)
         )
+        self.generation_habilete = False
+        self.generation_endurance = False
+        self.bouton_generer_endurance.clicked.connect(self.generer_endurance)
+        self.bouton_generer_habilete.clicked.connect(self.generer_habilete)
+    def generer_endurance(self):
+        if not self.generation_endurance:
+            endurance = random.randint(0, 9)
+            self.label_endurance.setText("Endurance: 20 + " + str(endurance) + " = " + str(endurance+20))
+            self.generation_endurance = True
+    def generer_habilete(self):
+        if not self.generation_habilete:
+            habilete = random.randint(0, 9)
+            self.label_habilete.setText("Habileté: 10 + " + str(habilete) + " = " + str(habilete+10))
+            self.generation_habilete= True
     # Si la page est fermee, on revient a la page precedente
     def closeEvent(self, event):
         page_principale.page_selection_livre.show()
