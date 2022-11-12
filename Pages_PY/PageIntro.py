@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_PageIntro(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(1400, 900)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -31,7 +31,7 @@ class Ui_PageIntro(object):
         self.texte_intro = QtWidgets.QLabel(self.centralwidget)
         self.texte_intro.setMinimumSize(QtCore.QSize(0, 400))
         font = QtGui.QFont()
-        font.setPointSize(16)
+        font.setPointSize(12)
         self.texte_intro.setFont(font)
         self.texte_intro.setAlignment(QtCore.Qt.AlignCenter)
         self.texte_intro.setWordWrap(True)

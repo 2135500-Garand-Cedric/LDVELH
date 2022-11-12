@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_PageChapitre(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(1000, 800)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -31,9 +31,10 @@ class Ui_PageChapitre(object):
         self.texte_chapitre = QtWidgets.QLabel(self.centralwidget)
         self.texte_chapitre.setMinimumSize(QtCore.QSize(0, 250))
         font = QtGui.QFont()
-        font.setPointSize(16)
+        font.setPointSize(14)
         self.texte_chapitre.setFont(font)
         self.texte_chapitre.setAlignment(QtCore.Qt.AlignCenter)
+        self.texte_chapitre.setWordWrap(True)
         self.texte_chapitre.setObjectName("texte_chapitre")
         self.verticalLayout.addWidget(self.texte_chapitre)
         self.bouton_choix_1 = QtWidgets.QPushButton(self.centralwidget)

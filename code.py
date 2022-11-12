@@ -10,6 +10,22 @@ from Pages_PY.PageCreationPersonnage2 import Ui_PageCreationPersonnage2
 from Pages_PY.PageIntro import Ui_PageIntro
 from Pages_PY.PageChapitre import Ui_PageChapitre
 from Pages_PY.PageQuitter import Ui_PageQuitter
+from Pages_PY.PageDescriptionDisciplineKai import Ui_PageDescriptionDisciplineKai
+from bd_LDVELH import getLivres, getDisciplinesKai, getDescription, getIntro, getChapitre, getChoix
+
+# Page permettant de visualiser la description d'une discipline kai
+class PageDescriptionDisciplineKai(QMainWindow, Ui_PageDescriptionDisciplineKai):
+    def __init__(self, *args, obj=None, **kwargs):
+        super(PageDescriptionDisciplineKai, self).__init__(*args, **kwargs)
+        # On va créer la fenêtre avec cette commande
+        self.setupUi(self)
+        self.bouton_retour.clicked.connect(self.retour)
+    # Empeche la page d'etre fermee
+    def closeEvent(self, event):
+        event.ignore()
+    def retour(self):
+        page_principale.page_description_discipline_kai.hide()
+        page_principale.page_creation_personnage_2.show()
 
 # Page permettant de quitter l'application en sauvegardant ou non
 class PageQuitter(QMainWindow, Ui_PageQuitter):
@@ -49,9 +65,57 @@ class PageChapitre(QMainWindow, Ui_PageChapitre):
         self.bouton_quitter.clicked.connect(
             lambda checked: page_principale.afficher_fenetre(page_principale.page_quitter, self)
         )
+        self.bouton_choix_1.clicked.connect(
+            lambda checked: self.afficherProchainChapitre(self.bouton_choix_1.text())
+        )
+        self.bouton_choix_2.clicked.connect(
+            lambda checked: self.afficherProchainChapitre(self.bouton_choix_2.text())
+        )
+        self.bouton_choix_3.clicked.connect(
+            lambda checked: self.afficherProchainChapitre(self.bouton_choix_3.text())
+        )
+        self.bouton_choix_4.clicked.connect(
+            lambda checked: self.afficherProchainChapitre(self.bouton_choix_4.text())
+        )
     # Empeche la page d'etre fermee
     def closeEvent(self, event):
         event.ignore()
+    def afficherProchainChapitre(self, prochain_chapitre):
+        choix_chapitre = ""
+        nb = 0
+        for lettre in prochain_chapitre:
+            if nb > 8:
+                choix_chapitre += lettre
+            nb += 1
+        page_principale.chapitre = int(choix_chapitre)
+        tableau_choix = {}
+        chapitre = getChapitre(page_principale.chapitre)
+        resultat = getChoix(page_principale.chapitre)
+        if chapitre and resultat is not None:
+            nb = 0
+            titre, texte = chapitre
+            page_principale.page_chapitre.titre_chapitre.setText("Chapitre " + titre)
+            page_principale.page_chapitre.texte_chapitre.setText(texte)
+            for choix in resultat:
+                no_chapitre_origine, no_chapitre_destination = choix
+                tableau_choix[nb] = "Chapitre " + str(no_chapitre_destination)
+                nb += 1
+            page_principale.page_chapitre.bouton_choix_1.hide()
+            page_principale.page_chapitre.bouton_choix_2.hide()
+            page_principale.page_chapitre.bouton_choix_3.hide()
+            page_principale.page_chapitre.bouton_choix_4.hide()
+            if len(tableau_choix) >= 1:
+                page_principale.page_chapitre.bouton_choix_1.show()
+                page_principale.page_chapitre.bouton_choix_1.setText(tableau_choix[0])
+                if len(tableau_choix) >= 2:
+                    page_principale.page_chapitre.bouton_choix_2.show()
+                    page_principale.page_chapitre.bouton_choix_2.setText(tableau_choix[1])
+                    if len(tableau_choix) >= 3:
+                        page_principale.page_chapitre.bouton_choix_3.show()
+                        page_principale.page_chapitre.bouton_choix_3.setText(tableau_choix[2])
+                        if len(tableau_choix) == 4:
+                            page_principale.page_chapitre.bouton_choix_4.show()
+                            page_principale.page_chapitre.bouton_choix_4.setText(tableau_choix[3])
 
 # Page permettant d'afficher le message d'introduction du livre
 class PageIntro(QMainWindow, Ui_PageIntro):
@@ -59,14 +123,42 @@ class PageIntro(QMainWindow, Ui_PageIntro):
         super(PageIntro, self).__init__(*args, **kwargs)
         # On va créer la fenêtre avec cette commande
         self.setupUi(self)
+        intro = getIntro()
+        if intro is not None:
+            titre, texte = intro
+            self.titre_intro.setText(titre)
+            self.texte_intro.setText(texte)
         # Connecter le bouton a un evenement
         # Ce bouton permet de passer a la prochaine page
-        self.bouton_continuer.clicked.connect(
-            lambda checked: page_principale.afficher_fenetre(page_principale.page_chapitre, self)
-        )
+        self.bouton_continuer.clicked.connect(self.afficherChapitre1)
+        #self.bouton_continuer.clicked.connect(self.afficherChapitre1)
     # Si la page est fermee, on revient a la page precedente
     def closeEvent(self, event):
         page_principale.page_creation_personnage_2.show()
+    def afficherChapitre1(self):
+        nb = 0
+        tableau_choix = {}
+        page_principale.page_chapitre.show()
+        self.hide()
+        chapitre = getChapitre(page_principale.chapitre)
+        resultat = getChoix(page_principale.chapitre)
+        if chapitre and resultat is not None:
+            titre, texte = chapitre
+            page_principale.page_chapitre.titre_chapitre.setText("Chapitre " + titre)
+            page_principale.page_chapitre.texte_chapitre.setText(texte)
+            for choix in resultat:
+                no_chapitre_origine, no_chapitre_destination = choix
+                tableau_choix[nb] = "Chapitre " + str(no_chapitre_destination)
+                nb += 1
+            page_principale.page_chapitre.bouton_choix_1.setText(tableau_choix[0])
+            page_principale.page_chapitre.bouton_choix_2.setText(tableau_choix[1])
+            page_principale.page_chapitre.bouton_choix_3.setText(tableau_choix[2])
+            page_principale.page_chapitre.bouton_choix_4.hide()
+
+
+
+        
+
 
 # Page permettant de continuer la creation du personnage lors d'une nouvelle partie
 # Selection des Disciplines Kai
@@ -75,14 +167,45 @@ class PageCreationPersonnage2(QMainWindow, Ui_PageCreationPersonnage2):
         super(PageCreationPersonnage2, self).__init__(*args, **kwargs)
         # On va créer la fenêtre avec cette commande
         self.setupUi(self)
+        disciplines_kai = getDisciplinesKai()
+        if disciplines_kai is not None:
+            for discipline_kai in disciplines_kai:
+                nom, description = discipline_kai
+                self.combobox_kai_1.addItem(nom)
+                self.combobox_kai_2.addItem(nom)
+                self.combobox_kai_3.addItem(nom)
+                self.combobox_kai_4.addItem(nom)
+                self.combobox_kai_5.addItem(nom)
         # Connecter le bouton a un evenement
-        # Ce bouton permet de passer a la prochaine page
+        self.bouton_description_1.clicked.connect(
+            lambda checked: self.afficherDescriptionDisciplineKai(page_principale.page_description_discipline_kai, self, self.combobox_kai_1.currentText())
+        )
+        self.bouton_description_2.clicked.connect(
+            lambda checked: self.afficherDescriptionDisciplineKai(page_principale.page_description_discipline_kai, self, self.combobox_kai_2.currentText())
+        )
+        self.bouton_description_3.clicked.connect(
+            lambda checked: self.afficherDescriptionDisciplineKai(page_principale.page_description_discipline_kai, self, self.combobox_kai_3.currentText())
+        )
+        self.bouton_description_4.clicked.connect(
+            lambda checked: self.afficherDescriptionDisciplineKai(page_principale.page_description_discipline_kai, self, self.combobox_kai_4.currentText())
+        )
+        self.bouton_description_5.clicked.connect(
+            lambda checked: self.afficherDescriptionDisciplineKai(page_principale.page_description_discipline_kai, self, self.combobox_kai_5.currentText())
+        )
         self.bouton_continuer.clicked.connect(
             lambda checked: page_principale.afficher_fenetre(page_principale.page_intro, self)
         )
     # Si la page est fermee, on revient a la page precedente    
     def closeEvent(self, event):
         page_principale.page_creation_personnage_1.show()
+    def afficherDescriptionDisciplineKai(self, fenetre, parent, textComboBox):
+        fenetre.show()
+        parent.hide()
+        page_principale.page_description_discipline_kai.nom_discipline_kai.setText(textComboBox)
+        resultat = getDescription(textComboBox)
+        if resultat is not None:
+            nom, description = resultat
+        page_principale.page_description_discipline_kai.description_discipline_kai.setText(description)
 
 # Page permettant de commencer la creation du personnage lors d'une nouvelle partie
 # Generation de l'endurance et de l'habilete
@@ -136,11 +259,10 @@ class PageSelectionLivre(QMainWindow, Ui_PageSelectionLivre):
         super(PageSelectionLivre, self).__init__(*args, **kwargs)
         # On va créer la fenêtre avec cette commande
         self.setupUi(self)
-        
-        #self.combobox_selection_livre.addItem("item1")
-        #self.combobox_selection_livre.addItem("item2")
-        #self.combobox_selection_livre.addItem("item3")
-        #self.combobox_selection_livre.addItem("item4")
+        livres = getLivres()
+        for livre in livres:
+            titre, tome, nom_serie = livre
+            self.combobox_selection_livre.addItem(nom_serie + ", tome " + str(tome) + " : " + titre)
         # Connecter le bouton a un evenement
         # Le bouton permet de passer a la prochaine page
         self.bouton_selectionner_livre.clicked.connect(
@@ -167,6 +289,9 @@ class PageBienvenu(QMainWindow, Ui_PageBienvenu):
         self.page_intro = PageIntro()
         self.page_chapitre = PageChapitre()
         self.page_quitter = PageQuitter()
+        self.page_description_discipline_kai = PageDescriptionDisciplineKai()
+        self.discipline_kai = ""
+        self.chapitre = 1
 
         # Connecter les deux boutons a un evenement
         # Ce bouton permet de choisir une sauvegarde
