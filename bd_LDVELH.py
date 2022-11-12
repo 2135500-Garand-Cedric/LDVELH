@@ -14,11 +14,11 @@ def getLivres():
     Arguments:
         pas d'arguments
     Returns:
-        Un tuple avec le titre, le tome et le nom de serie du livre
+        Un tuple avec l'id, le titre, le tome et le nom de serie du livre
     """
 
     query = """
-        select titre, tome, nom_serie from livre;
+        select id, titre, tome, nom_serie from livre;
     """
 
     result = ()
