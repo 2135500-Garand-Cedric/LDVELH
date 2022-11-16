@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>910</width>
+    <height>814</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="message_depart">
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Au départ de votre aventure, vous êtes vêtu d'une tunique et d'une cape de Seigneur Kaï, toutes deux de couleur verte. Le matériel dont vous disposez pour assurer votre survie est par ailleurs réduit au minimum. Vous possédez une Hache et un Sac à Dos qui contient un Repas. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="message_objets">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dans les ruines fumantes du monastère détruit, vous avez découvert une Carte Géographique (Objet Speciaux) qui vous permet de vous orienter. Cette carte est soigneusement rangée dans une poche intérieure de votre tunique. Vous avez également découvert l'un des objets suivants :&lt;/p&gt;&lt;p&gt;1 UNE ÉPÉE (Armes).&lt;/p&gt;&lt;p&gt;2 UN CASQUE (Objets Spéciaux), il ajoute 2 points d'ENDURANCE à votre total.&lt;/p&gt;&lt;p&gt;3 DEUX REPAS (Repas).&lt;/p&gt;&lt;p&gt;4 UNE COTTE DE MAILLES (Objets Spéciaux), elle ajoute 4 points d'ENDURANCE à votre total.&lt;/p&gt;&lt;p&gt;5 UNE MASSE D'ARMES (Armes).&lt;/p&gt;&lt;p&gt;6 UNE POTION DE GUÉRISON (Sac à Dos), elle vous rend 4 points d'ENDURANCE lorsque vous la buvez à l'issue d'un combat, mais vous ne disposez que d'une seule dose.&lt;/p&gt;&lt;p&gt;7 UN BATON (Armes).&lt;/p&gt;&lt;p&gt;8 UNE LANCE (Armes).&lt;/p&gt;&lt;p&gt;9 DOUZE COURONNES (Pièces d'Or).&lt;/p&gt;&lt;p&gt;0 UN GLAIVE (Armes).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="bouton_generer_objet">
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Générer Objet</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_objet">
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Objet:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="bouton_continuer">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Continuer</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>910</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -22,7 +22,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>200</height>
+          <height>100</height>
          </size>
         </property>
         <property name="font">
@@ -43,7 +43,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>100</height>
+          <height>75</height>
          </size>
         </property>
         <property name="font">
@@ -76,7 +76,7 @@
         <property name="minimumSize">
          <size>
           <width>0</width>
-          <height>100</height>
+          <height>75</height>
          </size>
         </property>
         <property name="font">
@@ -105,7 +105,46 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="bouton_generer_or">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>75</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Générer Pièces D'Or</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_or">
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Nombre Pièces D'Or:</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="bouton_continuer">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>75</height>
+         </size>
+        </property>
         <property name="font">
          <font>
           <pointsize>20</pointsize>
