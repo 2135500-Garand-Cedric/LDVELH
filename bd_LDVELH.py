@@ -122,7 +122,7 @@ def getIntro():
     return result
 
 # Sélectionne le numero de chapitre et le texte du chapitre
-def getChapitre(no_chapitre):
+def getChapitre(no_chapitre, livre_id):
     """
     Sélectionne le no_chapitre et le texte
     Arguments:
@@ -132,10 +132,11 @@ def getChapitre(no_chapitre):
     """
 
     query = """
-        select no_chapitre, texte from chapitre where no_chapitre = %(no_chapitre)s;
+        select no_chapitre, texte from chapitre where no_chapitre = %(no_chapitre)s and livre_id = %(livre_id)s;
     """
     parametres = {
-        'no_chapitre' : no_chapitre
+        'no_chapitre' : no_chapitre,
+        'livre_id' : livre_id
         }
     result = ()
     try:
@@ -152,7 +153,7 @@ def getChapitre(no_chapitre):
     return result
 
 # Sélectionne tous les choix possibles pour un chapitre
-def getChoix(no_chapitre):
+def getChoix(no_chapitre, livre_id):
     """
     Sélectionne le no_chapitre et le chapitre d'apres
     Arguments:
@@ -162,10 +163,13 @@ def getChoix(no_chapitre):
     """
 
     query = """
-        select no_chapitre_origine, no_chapitre_destination from lien_chapitre where no_chapitre_origine = %(no_chapitre)s;
+        select no_chapitre_origine, no_chapitre_destination from lien_chapitre
+            inner join chapitre on no_chapitre_origine = chapitre.id
+            where no_chapitre_origine = %(no_chapitre)s and livre_id = %(livre_id)s;
     """
     parametres = {
-        'no_chapitre' : no_chapitre
+        'no_chapitre' : no_chapitre,
+        'livre_id' : livre_id
         }
     result = ()
     try:
@@ -222,7 +226,7 @@ def getSauvegardes():
     """
 
     query = """
-        select sauvegarde.id, feuille_aventure_id, titre, no_chapitre, or_bourse, habilete, endurance from sauvegarde
+        select sauvegarde.id, feuille_aventure_id, titre, chapitre.id, no_chapitre, or_bourse, habilete, endurance, livre.id, objets_speciaux from sauvegarde
             inner join livre on livre.id = livre_id
             inner join chapitre on chapitre.id = chapitre_id
             inner join feuille_aventure on feuille_aventure.id = feuille_aventure_id;
@@ -269,22 +273,23 @@ def deleteSauvegarde(id):
         connection.close()
 
 
-def creerFeuilleAventure(habilete, endurance, or_bourse):
+def creerFeuilleAventure(habilete, endurance, or_bourse, objets_speciaux):
     """
     Insert une nouvelle ligne avec une nouvelle feuille d'aventure
     Arguments:
-        l'habilete, l'endurance et le nombre d'or dans la bourse
+        les objets speciaux, l'habilete, l'endurance et le nombre d'or dans la bourse
     Returns:
         l'id de la nouvelle feuille_aventure cree
     """
 
     query = """
-        insert into feuille_aventure (habilete, endurance, or_bourse) values (%(habilete)s, %(endurance)s, %(or_bourse)s);
+        insert into feuille_aventure (habilete, endurance, or_bourse, objets_speciaux) values (%(habilete)s, %(endurance)s, %(or_bourse)s, %(objets_speciaux)s);
     """
     parametres = {
         'habilete' : habilete,
         'endurance' : endurance,
-        'or_bourse' : or_bourse
+        'or_bourse' : or_bourse,
+        'objets_speciaux' : objets_speciaux
         }
     try:
         connection = mysql.connect(**db_config)
@@ -354,9 +359,9 @@ def ajouterArme(feuille_aventure_id, arme_id):
         cursor.close() 
         connection.close()
 
-def ajouterObjet(feuille_aventure_id, objet_id):
+def ajouterLiaisonObjet(feuille_aventure_id, objet_id):
     """
-    Insert une nouvelle ligne dans la table objet_id
+    Insert une nouvelle ligne dans la table feuille_aventure_objet
     Arguments:
         l'id de la feuille_aventure et l'id de l'objet
     Returns:
@@ -374,10 +379,10 @@ def ajouterObjet(feuille_aventure_id, objet_id):
         connection = mysql.connect(**db_config)
         cursor = connection.cursor()
         cursor.execute(query, parametres)
-        connection.commit()
-    except mysql.Error as erreur:
+    except mysql.Warning as erreur:
         print(erreur)
     finally:
+        connection.commit()
         cursor.close() 
         connection.close()
 
@@ -467,4 +472,245 @@ def getIdChapitre(no_chapitre):
     return result
 
 
+def getDisciplinesKaiSelectionne(id_feuille_aventure):
+    """
+    Sélectionne les disciplines kai en fonction de l'id de la feuille aventure
+    Arguments:
+        id_feuille_aventure: l'id de la feuille aventure
+    Returns:
+        Un tuple avec l'id, le nom et la description des disciplines kai
+    """
 
+    query = """
+        select discipline_kai.id, nom, description from discipline_kai
+            inner join feuille_aventure_discipline_kai on discipline_kai.id = discipline_kai_id
+            inner join feuille_aventure on feuille_aventure.id = feuille_aventure_id
+            where feuille_aventure.id = %(id_feuille_aventure)s;
+    """
+    parametres = {
+        'id_feuille_aventure' : id_feuille_aventure
+        }
+    result = ()
+    try:
+        connection = mysql.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, parametres)
+        result = cursor.fetchall()
+    except mysql.Error as erreur:
+        print(erreur)
+    finally:
+        cursor.close() 
+        connection.close()
+
+    return result
+
+
+def getArmesSelectionne(id_feuille_aventure):
+    """
+    Sélectionne les armes en fonction de l'id de la feuille aventure
+    Arguments:
+        id_feuille_aventure: l'id de la feuille aventure
+    Returns:
+        Un tuple avec l'id et le nom des armes
+    """
+
+    query = """
+        select arme.id, nom from arme
+            inner join feuille_aventure_arme on arme.id = arme_id
+            inner join feuille_aventure on feuille_aventure.id = feuille_aventure_id
+            where feuille_aventure.id = %(id_feuille_aventure)s;
+    """
+    parametres = {
+        'id_feuille_aventure' : id_feuille_aventure
+        }
+    result = ()
+    try:
+        connection = mysql.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, parametres)
+        result = cursor.fetchall()
+    except mysql.Error as erreur:
+        print(erreur)
+    finally:
+        cursor.close() 
+        connection.close()
+
+    return result
+
+def getArmes():
+    """
+    Sélectionne tous les armes
+    Arguments:
+        aucun
+    Returns:
+        Un tuple avec l'id et le nom des armes
+    """
+
+    query = """
+        select id, nom from arme;
+    """
+    result = ()
+    try:
+        connection = mysql.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query)
+        result = cursor.fetchall()
+    except mysql.Error as erreur:
+        print(erreur)
+    finally:
+        cursor.close() 
+        connection.close()
+
+    return result
+
+def getObjets(id_feuille_aventure):
+    """
+    Sélectionne les objets en fonction de l'id de la feuille aventure
+    Arguments:
+        id_feuille_aventure: l'id de la feuille aventure
+    Returns:
+        Un tuple avec l'id de liaison, l'id de l'objet, le nom et la description des objets
+    """
+
+    query = """
+        select feuille_aventure_objet.id, objet.id, nom, description from objet
+            inner join feuille_aventure_objet on objet.id = objet_id
+            inner join feuille_aventure on feuille_aventure.id = feuille_aventure_id
+            where feuille_aventure.id = %(id_feuille_aventure)s;
+    """
+    parametres = {
+        'id_feuille_aventure' : id_feuille_aventure
+        }
+    result = ()
+    try:
+        connection = mysql.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, parametres)
+        result = cursor.fetchall()
+    except mysql.Error as erreur:
+        print(erreur)
+    finally:
+        cursor.close() 
+        connection.close()
+
+    return result
+
+
+# Supprime un sauvegarde en fonction de l'id
+def supprimerObjetFeuilleAventure(id_liaison):
+    """
+    Supprime un lien entre objet et feuille aventure
+    Arguments:
+        id_liaison: l'id de liaison
+    Returns:
+        Aucun
+    """
+
+    query = """
+        delete from feuille_aventure_objet where id = %(id)s;
+    """
+    parametres = {
+        'id' : id_liaison
+        }
+    try:
+        connection = mysql.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, parametres)
+        connection.commit()
+    except mysql.Error as erreur:
+        print(erreur)
+    finally:
+        cursor.close() 
+        connection.close()
+
+def ajouterObjet(nom, description):
+    """
+    Insert une nouvelle ligne dans la table objet
+    Arguments:
+        nom: le nom de l'objet
+        description: la description de l'objet
+    Returns:
+        l'id de l'objet qui vient d'etre cree
+    """
+
+    query = """
+        insert into objet (nom, description) values (%(nom)s, %(description)s);
+    """
+    parametres = {
+        'nom' : nom,
+        'description' : description
+        }
+    try:
+        connection = mysql.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, parametres)
+        resultat = cursor.lastrowid
+        connection.commit()
+    except mysql.Error as erreur:
+        print(erreur)
+    finally:
+        cursor.close() 
+        connection.close()
+    return resultat
+
+def getIdArme(nom):
+    """
+    Sélectionne l'id de l'arme en fonction de son id
+    Arguments:
+        nom: le nom de l'arme
+    Returns:
+        Un tuple avec l'id et le nom de l'arme
+    """
+
+    query = """
+        select id, nom from arme where nom = %(nom)s;
+    """
+    parametres = {
+        'nom' : nom
+        }
+    result = ()
+    try:
+        connection = mysql.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, parametres)
+        result = cursor.fetchone()
+    except mysql.Error as erreur:
+        print(erreur)
+    finally:
+        cursor.close() 
+        connection.close()
+
+    return result
+
+def updateFeuilleAventure(nb_or, habilete, endurance, objets_speciaux, feuille_aventure_id):
+    """
+    Update une feuille aventure
+    Arguments:
+        
+    Returns:
+        
+    """
+
+    query = """
+        update feuille_aventure set or_bourse = %(nb_or)s,
+            habilete = %(habilete)s, endurance = %(endurance)s, 
+            objets_speciaux = %(objets_speciaux)s
+            where id = %(feuille_aventure_id)s
+    """
+    parametres = {
+        'nb_or' : nb_or,
+        'habilete' : habilete,
+        'endurance' : endurance,
+        'objets_speciaux' : objets_speciaux,
+        'feuille_aventure_id' : feuille_aventure_id
+        }
+    try:
+        connection = mysql.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, parametres)
+        connection.commit()
+    except mysql.Error as erreur:
+        print(erreur)
+    finally:
+        cursor.close() 
+        connection.close()
