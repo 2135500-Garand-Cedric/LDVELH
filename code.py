@@ -19,83 +19,100 @@ from Pages_PY.PageSupprimerObjet import Ui_PageSupprimerObjet
 # Importer les methodes de communication avec la bd
 from bd_LDVELH import *
 
+# Cette page permet d'ajouter un objet a la feuille d'aventure
 class PageAjouterObjet(QMainWindow, Ui_PageAjouterObjet):
     def __init__(self, *args, obj=None, **kwargs):
         super(PageAjouterObjet, self).__init__(*args, **kwargs)
         # On va créer la fenêtre avec cette commande
         self.setupUi(self)
-        # Ce bouton permet de retourner a la page de selection des disciplines kai
+        # Ce bouton permet de retourner a la page feuille aventure
         self.bouton_annuler.clicked.connect(self.retour)
+        # Ce bouton permet d'ajouter l'objet
         self.bouton_ajouter.clicked.connect(self.ajouterObjet)
     # Empeche la page d'etre fermee
     def closeEvent(self, event):
         event.ignore()
-    # Cette methode permet d'afficher la page de selection des disciplines kai et de cacher la page de description
+    # Cette fonction permet de fermer la page actuelle est de revenir a la page feuille aventure
     def retour(self):
         self.hide()
         page_principale.page_feuille_aventure.show()
+    # Cette fonction permet d'ajouter un nouvel objet a la feuille d'aventure
     def ajouterObjet(self):
+        # Aller chercher le nom et la description de l'objet et effacer les champs texte
         nom = self.champ_texte_nom.text()
         self.champ_texte_nom.clear()
         description = self.champ_texte_description.toPlainText()
         self.champ_texte_description.clear()
+        # Si les champs textes ne sont pas vides, on enregistre l'objet dans la bd
         if nom != '' and description != '':
             id_objet = ajouterObjet(nom, description)
             ajouterLiaisonObjet(page_principale.id_feuille_aventure, id_objet)
             page_principale.page_chapitre.afficherObjets()
             page_principale.page_feuille_aventure.bouton_annuler.hide()
+        # Retourner a la page feuille aventure
         self.retour()
 
+# Cette page permet de supprimer un objet
 class PageSupprimerObjet(QMainWindow, Ui_PageSupprimerObjet):
     def __init__(self, *args, obj=None, **kwargs):
         super(PageSupprimerObjet, self).__init__(*args, **kwargs)
         # On va créer la fenêtre avec cette commande
         self.setupUi(self)
-        # Ce bouton permet de retourner a la page de selection des disciplines kai
+        # Ce bouton permet de retourner a la page de la feuille d'aventure
         self.bouton_annuler.clicked.connect(self.retour)
+        # Ce bouton permet de supprimer un objet
         self.bouton_supprimer.clicked.connect(
             lambda checked: self.supprimerObjet(self.combobox_objet.currentIndex())
         ) 
     # Empeche la page d'etre fermee
     def closeEvent(self, event):
         event.ignore()
-    # Cette methode permet d'afficher la page de selection des disciplines kai et de cacher la page de description
+    # Cette fonction permet de fermer la page actuelle et de faire afficher la page feuille aventure
     def retour(self):
         self.hide()
         page_principale.page_feuille_aventure.show()
+    # Cette fonction permet de supprimer un objet
     def supprimerObjet(self, index):
         id_liaison = page_principale.page_feuille_aventure.objets[index][0]
         supprimerObjetFeuilleAventure(id_liaison)
         page_principale.page_chapitre.afficherObjets()
-        self.retour()
         page_principale.page_feuille_aventure.bouton_annuler.hide()
-
-
+        # Retourner a la page feuille aventure
+        self.retour()
+        
+# Cette page permet d'afficher et de modifier la feuille d'aventure
 class PageFeuilleAventure(QMainWindow, Ui_PageFeuilleAventure):
     def __init__(self, *args, obj=None, **kwargs):
         super(PageFeuilleAventure, self).__init__(*args, **kwargs)
         # On va créer la fenêtre avec cette commande
         self.setupUi(self)
-        # Ce bouton permet de retourner a la page de selection des disciplines kai
+        # Ce bouton permet de faire afficher la page pour supprimer un objet
         self.bouton_supprimer.clicked.connect(self.afficherPageSupprimerObjet)
+        # Ce bouton permet de retourner a la page chapitre
+        self.bouton_annuler.clicked.connect(self.retour)
+        # Ce bouton permet d'enregistrer les modifications de la feuille d'aventure
+        self.bouton_modifier.clicked.connect(self.updateFeuilleAventure)
+        # Ce bouton permet de faire afficher la page pour ajouter un objet
         self.bouton_ajouter.clicked.connect(
             lambda checked: page_principale.afficher_fenetre(page_principale.page_ajouter_objet, self)
         )
-        self.bouton_annuler.clicked.connect(self.retour)
-        self.bouton_modifier.clicked.connect(self.retour)
-        self.bouton_modifier.clicked.connect(self.updateFeuilleAventure)
+        # Ce bouton permet de faire afficher la description de la premiere discipline kai
         self.bouton_description_1.clicked.connect(
             lambda checked: self.afficherDescriptionDisciplineKai(0)
         )
+        # Ce bouton permet de faire afficher la description de la deuxieme discipline kai
         self.bouton_description_2.clicked.connect(
             lambda checked: self.afficherDescriptionDisciplineKai(1)
-        )
+        )       
+         # Ce bouton permet de faire afficher la description de la troisieme discipline kai
         self.bouton_description_3.clicked.connect(
             lambda checked: self.afficherDescriptionDisciplineKai(2)
-        )
+        )       
+        # Ce bouton permet de faire afficher la description de la quatrieme discipline kai
         self.bouton_description_4.clicked.connect(
             lambda checked: self.afficherDescriptionDisciplineKai(3)
         )
+        # Ce bouton permet de faire afficher la description de la cinquieme discipline kai
         self.bouton_description_5.clicked.connect(
             lambda checked: self.afficherDescriptionDisciplineKai(4)
         )
@@ -106,43 +123,57 @@ class PageFeuilleAventure(QMainWindow, Ui_PageFeuilleAventure):
     def retour(self):
         self.hide()
         page_principale.page_chapitre.show()
+    # Cette methode permet de faire afficher la page permettant de supprimer un objet
     def afficherPageSupprimerObjet(self):
         self.hide()
         page_principale.page_supprimer_objet.show()
         page_principale.page_supprimer_objet.combobox_objet.clear()
+        # Lire les infos dans la bd et les afficher dans le combobox
         self.objets = getObjets(page_principale.id_feuille_aventure)
         for objet in self.objets:
             id_liaison, id_objet, nom, description = objet
             page_principale.page_supprimer_objet.combobox_objet.addItem(nom)
+    # Cette methode permet de faire afficher la page de description des disciplines kai
     def afficherDescriptionDisciplineKai(self, index):
         self.hide()
         page_principale.page_description_discipline_kai.show()
+        # Aller chercher les infos de la discipline kai et l'afficher
         id, nom, description = page_principale.page_chapitre.disciplines_kai[index]
         page_principale.page_description_discipline_kai.nom_discipline_kai.setText(nom)
         page_principale.page_description_discipline_kai.description_discipline_kai.setText(description)
+    # Cette fonction permet d'enregistrer les modifications de la feuille aventure
     def updateFeuilleAventure(self):
-        nb_or = self.champ_texte_bourse.text()
-        endurance = self.champ_texte_endurance.text()
-        habilete = self.champ_texte_habilete.text()
+        # Aller chercher les informations dans la page
+        nb_or = int(self.champ_texte_bourse.text())
+        endurance = int(self.champ_texte_endurance.text())
+        habilete = int(self.champ_texte_habilete.text())
         objets_speciaux = self.cham_texte_objets_speciaux.toPlainText()
+        # Updater les informations de base de la feuille aventure
         updateFeuilleAventure(nb_or, habilete, endurance, objets_speciaux, page_principale.id_feuille_aventure)
-        chapitre = getIdChapitre(page_principale.chapitre)
-        if chapitre is not None:
-            id_chapitre, no_chapitre = chapitre
-            if not page_principale.sauvegarde:
-                creerSauvegarde(page_principale.id_livre, id_chapitre, page_principale.id_feuille_aventure)
-            else:
-                update_sauvegarde(page_principale.id_sauvegarde, id_chapitre)
+        # Aller chercher le nom des armes et leur index dans le combobox
         arme1 = self.combobox_arme_1.currentText()
         arme2 = self.combobox_arme_2.currentText()
-        #if arme1 != " ":
-        #    tuple_arme = getIdArme(arme1)
-        #    id_arme_1 = tuple_arme[0][0]
-        #if arme2 != " ":
-        #    tuple_arme = getIdArme(arme2)
-        #    id_arme_2 = tuple_arme[0][0]
-        self.hide()
-        page_principale.page_chapitre.show()
+        index_arme_1 = self.combobox_arme_1.currentIndex()
+        index_arme_2 = self.combobox_arme_2.currentIndex()
+        modif_arme = True
+        # Si l'index est a 0 pour les deux armes --> les armes n'ont pas change donc pas besoin de les update
+        if index_arme_1 == 0 and index_arme_2 == 0:
+            modif_arme = False
+        if modif_arme:
+            # Supprime le lien entre les armes et la feuille aventure
+            supprimerLienArme(page_principale.id_feuille_aventure)
+            # Pour chaque arme, si le nom n'est pas " ", on recree un nouveau lien entre l'arme et la feuille aventure
+            if arme1 != " ":
+                tuple_arme = getIdArme(arme1)
+                id, nom = tuple_arme
+                ajouterArme(page_principale.id_feuille_aventure, id)
+            if arme2 != " ":
+                tuple_arme = getIdArme(arme2)
+                id, nom = tuple_arme
+                ajouterArme(page_principale.id_feuille_aventure, id)
+        self.bouton_annuler.show()
+        # Retourner a la page du chapitre
+        self.retour()
 
 # Page permettant de visualiser la description d'une discipline kai
 class PageDescriptionDisciplineKai(QMainWindow, Ui_PageDescriptionDisciplineKai):
@@ -150,7 +181,7 @@ class PageDescriptionDisciplineKai(QMainWindow, Ui_PageDescriptionDisciplineKai)
         super(PageDescriptionDisciplineKai, self).__init__(*args, **kwargs)
         # On va créer la fenêtre avec cette commande
         self.setupUi(self)
-        # Ce bouton permet de retourner a la page de selection des disciplines kai
+        # Ce bouton permet de retourner a la page de selection des disciplines kai ou a la feuille d'aventure
         self.bouton_retour.clicked.connect(self.retour)
     # Empeche la page d'etre fermee
     def closeEvent(self, event):
@@ -158,6 +189,7 @@ class PageDescriptionDisciplineKai(QMainWindow, Ui_PageDescriptionDisciplineKai)
     # Cette methode permet d'afficher la page de selection des disciplines kai et de cacher la page de description
     def retour(self):
         self.hide()
+        # Si creation est a true, retourne a la page creation personnage 2 sinon, va a la page feuille aventure
         if page_principale.creation:
             page_principale.page_creation_personnage_2.show()
         else:
@@ -186,10 +218,12 @@ class PageQuitter(QMainWindow, Ui_PageQuitter):
         chapitre = getIdChapitre(page_principale.chapitre)
         if chapitre is not None:
             id_chapitre, no_chapitre = chapitre
+            # Si la partie provient d'une sauvegarde, update la sauvegarde sinon, cree une nouvelle sauvegarde
             if not page_principale.sauvegarde:
                 creerSauvegarde(page_principale.id_livre, id_chapitre, page_principale.id_feuille_aventure)
             else:
                 update_sauvegarde(page_principale.id_sauvegarde, id_chapitre)
+            # Ferme l'application
             sys.exit()
     # Fonction permettant de quitter l'application sans sauvegarder
     def quitter_sans_sauvegarder(self):
@@ -224,28 +258,48 @@ class PageChapitre(QMainWindow, Ui_PageChapitre):
         self.bouton_choix_4.clicked.connect(
             lambda checked: self.afficherProchainChapitre(self.bouton_choix_4.text())
         )
+        # Ce bouton permet d'afficher la feuille d'aventure
         self.bouton_feuille_aventure.clicked.connect(self.afficherFeuilleAventure)
     # Empeche la page d'etre fermee
     def closeEvent(self, event):
         event.ignore()
+    # Cette fonction permet d'afficher les informations pour la page feuille aventure
     def afficherFeuilleAventure(self):
         # Affiche la feuille aventure et cache la page courante
         self.hide()
         page_principale.page_feuille_aventure.show()
+        # Remettre a jour les informations de la feuille aventure
+        info_feuille_aventure = getInfoFeuilleAventure(page_principale.id_feuille_aventure)
+        habilete, endurance, or_bourse, objets_speciaux = info_feuille_aventure
+        page_principale.habilete = habilete
+        page_principale.endurance = endurance
+        page_principale.nb_or = or_bourse
+        page_principale.objets_speciaux = objets_speciaux
+        # Afficher les informations de la feuille aventure
         page_principale.page_feuille_aventure.champ_texte_bourse.setText(str(page_principale.nb_or))
         page_principale.page_feuille_aventure.champ_texte_endurance.setText(str(page_principale.endurance))
         page_principale.page_feuille_aventure.champ_texte_habilete.setText(str(page_principale.habilete))
+        page_principale.page_feuille_aventure.combobox_arme_1.clear()
+        page_principale.page_feuille_aventure.combobox_arme_2.clear()
+        # Aller chercher les tous les armes et les armes liees a la feuille aventure
         self.armesSelectionne = getArmesSelectionne(page_principale.id_feuille_aventure)
         armes = getArmes()
+        # Si la longueur du tableau des armes selectionne est de 0, le premier item des deux combobox arme est " "
         if len(self.armesSelectionne) == 0:
             page_principale.page_feuille_aventure.combobox_arme_1.addItem(" ")
             page_principale.page_feuille_aventure.combobox_arme_2.addItem(" ")
+        # Si la longueur du tableau des armes selectionne est de 1, le premier item d'un combobox est l'arme et l'autre est " "
         elif len(self.armesSelectionne) == 1:
             page_principale.page_feuille_aventure.combobox_arme_1.addItem(self.armesSelectionne[0][1])
+            page_principale.page_feuille_aventure.combobox_arme_1.addItem(" ")
             page_principale.page_feuille_aventure.combobox_arme_2.addItem(" ")
+        # Sinon dexu armes sont liees a la feuille aventure donc les deux combobox ont une arme en premier
         else:
             page_principale.page_feuille_aventure.combobox_arme_1.addItem(self.armesSelectionne[0][1])
             page_principale.page_feuille_aventure.combobox_arme_2.addItem(self.armesSelectionne[1][1])
+            page_principale.page_feuille_aventure.combobox_arme_1.addItem(" ")
+            page_principale.page_feuille_aventure.combobox_arme_2.addItem(" ")
+        # Ajoute tous les autres armes dans les deux combobox sauf ceux qui sont selectionne
         for arme in armes:
             id, nom = arme
             if len(self.armesSelectionne) >= 1:
@@ -256,12 +310,13 @@ class PageChapitre(QMainWindow, Ui_PageChapitre):
                     page_principale.page_feuille_aventure.combobox_arme_2.addItem(nom)
             else:
                 page_principale.page_feuille_aventure.combobox_arme_2.addItem(nom)
-        
+        # Affiche les objets et les objets speciaux
         self.afficherObjets()
         page_principale.page_feuille_aventure.cham_texte_objets_speciaux.setPlainText(page_principale.objets_speciaux)
 
         tableau_disciplines = {}
         nb = 0
+        # Va chercher les disciplines kai selectionnes et les affiche sur la feuille aventure
         self.disciplines_kai = getDisciplinesKaiSelectionne(page_principale.id_feuille_aventure)
         for discipline_kai in self.disciplines_kai:
             id, nom, description = discipline_kai
@@ -272,28 +327,9 @@ class PageChapitre(QMainWindow, Ui_PageChapitre):
         page_principale.page_feuille_aventure.discipline_kai_3.setText(tableau_disciplines[2])
         page_principale.page_feuille_aventure.discipline_kai_4.setText(tableau_disciplines[3])
         page_principale.page_feuille_aventure.discipline_kai_5.setText(tableau_disciplines[4])
-    #def afficherObjetsSpeciaux(self):
-    #    objets_speciaux = getObjetsSpeciaux(page_principale.id_feuille_aventure)
-    #    for i in range(len(objets_speciaux)):
-    #        name_description = "description_objet_speciaux_" + i
-    #        name_titre = "titre_objet_speciaux_" + i
-#
-    #        page_principale.page_feuille_aventure.titre_objet_speciaux_1 = QtWidgets.QLabel(page_principale.page_feuille_aventure.scrollAreaWidgetContents_2)
-    #        page_principale.page_feuille_aventure.titre_objet_speciaux_1.setMinimumSize(QtCore.QSize(0, 75))
-    #        font = QtGui.QFont()
-    #        font.setPointSize(16)
-    #        page_principale.page_feuille_aventure.titre_objet_speciaux_1.setFont(font)
-    #        page_principale.page_feuille_aventure.titre_objet_speciaux_1.setObjectName(name_titre)
-    #        page_principale.page_feuille_aventure.gridLayout_4.addWidget(page_principale.page_feuille_aventure.titre_objet_speciaux_1, i, 0, 1, 1)
-#
-    #        page_principale.page_feuille_aventure.description_objet_speciaux_1 = QtWidgets.QLabel(page_principale.page_feuille_aventure.scrollAreaWidgetContents_2)
-    #        page_principale.page_feuille_aventure.description_objet_speciaux_1.setMinimumSize(QtCore.QSize(600, 75))
-    #        font = QtGui.QFont()
-    #        font.setPointSize(14)
-    #        page_principale.page_feuille_aventure.description_objet_speciaux_1.setFont(font)
-    #        page_principale.page_feuille_aventure.description_objet_speciaux_1.setObjectName(name_description)
-    #        page_principale.page_feuille_aventure.gridLayout_4.addWidget(page_principale.page_feuille_aventure.description_objet_speciaux_1, i, 1, 1, 1)
+    # Cette methode permet de faire afficher les objets
     def afficherObjets(self):
+        # Ce tableau 2d contient tous les label de titre et de description des objets
         tableau_objets = [  
             [page_principale.page_feuille_aventure.titre_objet_1, page_principale.page_feuille_aventure.description_objet_1],
             [page_principale.page_feuille_aventure.titre_objet_2, page_principale.page_feuille_aventure.description_objet_2],
@@ -304,8 +340,9 @@ class PageChapitre(QMainWindow, Ui_PageChapitre):
             [page_principale.page_feuille_aventure.titre_objet_7, page_principale.page_feuille_aventure.description_objet_7],
             [page_principale.page_feuille_aventure.titre_objet_8, page_principale.page_feuille_aventure.description_objet_8]
         ]
-        objets = getObjets(page_principale.id_feuille_aventure)
         nb = 0
+        # Va chercher les objets et pour le nombre d'objets, affiche le bon nombre de labels dans la page feuille aventure
+        objets = getObjets(page_principale.id_feuille_aventure)
         for titre_objet, description_objet in tableau_objets:
             titre_objet.show()
             description_objet.show()
@@ -373,23 +410,30 @@ class PageIntro(QMainWindow, Ui_PageIntro):
             # Affiche le titre et le texte de l'intro
             self.titre_intro.setText(titre)
             self.texte_intro.setText(texte)
-        # Connecter le bouton a un evenement
         # Ce bouton permet de passer au chapitre 1
         self.bouton_continuer.clicked.connect(self.afficherChapitre1)
     # Si la page est fermee, on revient a la page precedente
     def closeEvent(self, event):
         page_principale.page_creation_personnage_2.show()
+    # Cette methode permet de creer la feuille d'aventure
     def creerFeuilleAventure(self):
+        # Cree la feuille d'aventure avec tous les donnees necessaires
         page_principale.id_feuille_aventure = creerFeuilleAventure(page_principale.habilete, page_principale.endurance, page_principale.nb_or, page_principale.objets_speciaux)
+        page_principale.creation = False
+        # Fait le lien entre la feuille d'aventure et les 5 disciplines kai
         for i in range(5):
             ajouterDisciplinesKai(page_principale.id_feuille_aventure, page_principale.disciplines_kai[i])
+        # Fait le lien entre les armes et la feuille d'aventure
         for arme in page_principale.armes:
             ajouterArme(page_principale.id_feuille_aventure, arme)
+        # Fait le lien entre les objets et la feuille d'aventure
         for objet in page_principale.objets:
-            ajouterLiaisonObjet(page_principale.id_feuille_aventure, objet)
+            if objet != 0:
+                ajouterLiaisonObjet(page_principale.id_feuille_aventure, objet)
             
     # Cette fonction permet d'afficher le titre, le texte et les choix du chapitre 1
     def afficherChapitre1(self):
+        # Cree la feuille d'aventure
         self.creerFeuilleAventure()
         nb = 0
         tableau_choix = {}
@@ -436,7 +480,6 @@ class PageCreationPersonnage3(QMainWindow, Ui_PageCreationPersonnage3):
         super(PageCreationPersonnage3, self).__init__(*args, **kwargs)
         # On va créer la fenêtre avec cette commande
         self.setupUi(self)
-        # Connecter le bouton a un evenement
         # Ce bouton permet de passer a la prochaine page
         self.bouton_continuer.clicked.connect(
             lambda checked: page_principale.afficher_fenetre(page_principale.page_intro, self)
@@ -445,34 +488,37 @@ class PageCreationPersonnage3(QMainWindow, Ui_PageCreationPersonnage3):
         self.generation_objet = False
         # Ce bouton permet de generer l'objet de depart
         self.bouton_generer_objet.clicked.connect(self.genererObjet)
+    # Cette fonction permet de generer l'objet trouve dans les ruines du monastere
     def genererObjet(self):
         if not self.generation_objet:
             # Genere un nombre aleatoire de 0 a 9
             objet = random.randint(0, 9)
             # Affiche l'objet trouve
             self.label_objet.setText("Objet: " + str(objet))
+            # Le joueur obtient un certain objet selon le nombre qui est genere
             match objet:
                 case 0:
                     page_principale.armes.add(10)
                 case 1:
                     page_principale.armes.add(6)
                 case 2:
-                    page_principale.objets_speciaux + "Un Casque: il ajoute 2 points d'ENDURANCE à votre total.\n"
+                    page_principale.objets_speciaux += "Un Casque: il ajoute 2 points d'ENDURANCE à votre total.\n"
                 case 3:
-                    page_principale.objets.add(1)
-                    page_principale.objets.add(1)
+                    page_principale.objets[1] = 1
+                    page_principale.objets[2] = 1
                 case 4:
-                    page_principale.objets_speciaux + "Une Cotte de Maille: elle ajoute 4 points d'ENDURANCE à votre total.\n"
+                    page_principale.objets_speciaux += "Une Cotte de Maille: elle ajoute 4 points d'ENDURANCE à votre total.\n"
                 case 5:
                     page_principale.armes.add(3)
                 case 6:
-                    page_principale.objets.add(2)
+                    page_principale.objets[1] = 2
                 case 7:
                     page_principale.armes.add(9)
                 case 8:
                     page_principale.armes.add(2)
                 case 9:
                     page_principale.nb_or += 12
+            # Permet de generer un nombre qu'une seule fois
             self.generation_objet = True
 
 # Page permettant de continuer la creation du personnage lors d'une nouvelle partie
@@ -498,7 +544,6 @@ class PageCreationPersonnage2(QMainWindow, Ui_PageCreationPersonnage2):
                 self.combobox_kai_3.addItem(nom)
                 self.combobox_kai_4.addItem(nom)
                 self.combobox_kai_5.addItem(nom)
-        # Connecter le bouton a un evenement
         # Ce bouton permet d'obtenir la description de la discipline kai selectionne dans le premier comboBox
         self.bouton_description_1.clicked.connect(
             lambda checked: self.afficherDescriptionDisciplineKai(
@@ -547,6 +592,7 @@ class PageCreationPersonnage2(QMainWindow, Ui_PageCreationPersonnage2):
             nom, description = resultat
         # Affiche la description de la discipline kai
         page_principale.page_description_discipline_kai.description_discipline_kai.setText(description)
+    # Cette fonction permet de verifier les disciplines kai
     def verificationDisciplinesKai(self):
         erreur = False
         nb = 0
@@ -585,7 +631,6 @@ class PageCreationPersonnage1(QMainWindow, Ui_PageCreationPersonnage1):
         super(PageCreationPersonnage1, self).__init__(*args, **kwargs)
         # On va créer la fenêtre avec cette commande
         self.setupUi(self)
-        # Connecter le bouton a un evenement
         # Ce bouton permet de passer a la prochaine page
         self.bouton_continuer.clicked.connect(
             lambda checked: page_principale.afficher_fenetre(page_principale.page_creation_personnage_2, self)
@@ -640,21 +685,23 @@ class PageSauvegarde(QMainWindow, Ui_PageSauvegarde):
         super(PageSauvegarde, self).__init__(*args, **kwargs)
         # On va créer la fenêtre avec cette commande
         self.setupUi(self)
+        # Va chercher tous les sauvegardes et les affiche dans le combobox
         self.sauvegardes = getSauvegardes()
         for sauvegarde in self.sauvegardes:
             sauvegarde_id, feuille_aventure_id, titre, id_chapitre, no_chapitre, or_bourse, habilete, endurance, id_livre, objets_speciaux = sauvegarde
-            self.combobox_sauvegarde.addItem(titre + "/Chapitre " + no_chapitre + "/Habilete: " + str(habilete) + "/Endurance: " + str(endurance) + "/Or: " + str(or_bourse))
-        # Connecter le bouton a un evenement
-        # Ce bouton permet de passer a la prochaine page
+            self.combobox_sauvegarde.addItem(str(sauvegarde_id) + ": " + titre + "/Chapitre " + no_chapitre + "/Habilete: " + str(habilete) + "/Endurance: " + str(endurance) + "/Or: " + str(or_bourse))
+        # Ce bouton permet de selectionner une sauvegarde
         self.bouton_selectionner_sauvegarde.clicked.connect(
             lambda checked: self.selectionSauvegarde(self.combobox_sauvegarde.currentIndex())
         )
+        # Ce bouton permet de supprimer une sauvegarde
         self.bouton_supprimer_sauvegarde.clicked.connect(
-            lambda checked: self.supprimerSauvegarde(self.combobox_sauvegarde.currentIndex())
+            lambda checked: self.supprimerSauvegarde(self.combobox_sauvegarde.currentText(), self.combobox_sauvegarde.currentIndex())
         )
     # Si la page est fermee, on revient a la page precedente
     def closeEvent(self, event):
         page_principale.show()
+    # Cette methode permet de selectionner une sauvegarde
     def selectionSauvegarde(self, index):
         nb = 0
         trouve = False
@@ -662,6 +709,7 @@ class PageSauvegarde(QMainWindow, Ui_PageSauvegarde):
         for sauvegarde in self.sauvegardes:
             sauvegarde_id, feuille_aventure_id, titre, id_chapitre, no_chapitre, or_bourse, habilete, endurance, id_livre, objets_speciaux = sauvegarde
             if nb == index and not trouve:
+                # Lorsque la sauvegarde esr trouve, enregistre tous les informations dans la page principale
                 page_principale.id_sauvegarde = sauvegarde_id
                 chapitre = "Chapitre " + no_chapitre
                 trouve = True
@@ -679,16 +727,21 @@ class PageSauvegarde(QMainWindow, Ui_PageSauvegarde):
         self.hide()
         page_principale.page_chapitre.show()
         page_principale.page_chapitre.afficherProchainChapitre(chapitre)
-    def supprimerSauvegarde(self, index):
-        nb = 0
-        trouve = False
+    # Cette methode permet de supprimer une sauvegarde
+    def supprimerSauvegarde(self, text, index):
+        id_sauvegarde = ""
+        fin = False
+        # Enleve la sauvegarde du combobox
         self.combobox_sauvegarde.removeItem(index)
-        # Trouve le id de la sauvegarde en fonction de son index dans le comboBox
-        for sauvegarde in self.sauvegardes:
-            sauvegarde_id, feuille_aventure_id, titre, id_chapitre, no_chapitre, or_bourse, habilete, endurance, id_livre, objet_speciaux = sauvegarde
-            if nb == index and not trouve:
-                page_principale.id_sauvegarde = sauvegarde_id
-            nb += 1
+        # Trouve l'id de la sauvegarde en fonction du texte dans le combobox
+        for lettre in text:
+            if lettre != ":":
+                if not fin:
+                    id_sauvegarde += lettre
+            else:
+                fin = True
+        page_principale.id_sauvegarde = id_sauvegarde
+        # Efface la sauvegarde
         deleteSauvegarde(page_principale.id_sauvegarde)
         
 # Page permettant de selectionner un livre afin de commencer une nouvelle partie
@@ -703,7 +756,6 @@ class PageSelectionLivre(QMainWindow, Ui_PageSelectionLivre):
         for livre in self.livres:
             id, titre, tome, nom_serie = livre
             self.combobox_selection_livre.addItem(nom_serie + ", tome " + str(tome) + " : " + titre)
-        # Connecter le bouton a un evenement
         # Le bouton permet de passer a la prochaine page
         self.bouton_selectionner_livre.clicked.connect(
             lambda checked: self.selectionLivre(self.combobox_selection_livre.currentIndex())
@@ -758,12 +810,11 @@ class PageBienvenu(QMainWindow, Ui_PageBienvenu):
         self.nb_or = 0
         self.disciplines_kai = {}
         self.armes = {7}
-        self.objets = {1}
+        self.objets = [1, 0, 0, 0, 0, 0, 0, 0]
         self.objets_speciaux = "Carte Géographique: Vous permet de vous orienter\n"
         self.id_sauvegarde = 0
         self.id_feuille_aventure = 0
 
-        # Connecter les deux boutons a un evenement
         # Ce bouton permet de choisir une sauvegarde
         self.bouton_continuer_sauvegarde.clicked.connect(
             lambda checked: self.afficher_fenetre(self.page_sauvegarde, self)

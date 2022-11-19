@@ -1,5 +1,5 @@
 import mysql.connector as mysql
-
+# Informations de connection a la bd
 db_config = {
     'host' : 'localhost',
     'user' : 'root',
@@ -36,7 +36,7 @@ def getLivres():
     return result
 
 
-# Sélectionne les livres
+# Selectionne tous les disciplines kai
 def getDisciplinesKai():
     """
     Sélectionne les disciplines kai
@@ -127,6 +127,7 @@ def getChapitre(no_chapitre, livre_id):
     Sélectionne le no_chapitre et le texte
     Arguments:
         no_chapitre: le numero du chapitre 
+        livre_id: l'id du livre
     Returns:
         Un tuple avec le no_chapitre et le texte du chapitre
     """
@@ -134,6 +135,7 @@ def getChapitre(no_chapitre, livre_id):
     query = """
         select no_chapitre, texte from chapitre where no_chapitre = %(no_chapitre)s and livre_id = %(livre_id)s;
     """
+
     parametres = {
         'no_chapitre' : no_chapitre,
         'livre_id' : livre_id
@@ -158,6 +160,7 @@ def getChoix(no_chapitre, livre_id):
     Sélectionne le no_chapitre et le chapitre d'apres
     Arguments:
         no_chapitre: le numero du chapitre 
+        livre_id: l'id du livre
     Returns:
         Un tuple avec le no_chapitre et les choix pour le prochain chapitre
     """
@@ -185,7 +188,7 @@ def getChoix(no_chapitre, livre_id):
 
     return result
 
-# Sélectionne l'id d'une discipline kai
+# Sélectionne l'id d'une discipline kai en fonction du nom
 def getIdDisciplineKai(nom):
     """
     Sélectionne l'id d'une discipline kai
@@ -215,10 +218,11 @@ def getIdDisciplineKai(nom):
 
     return result
 
-# Sélectionne les sauvegardes presentes
+# Sélectionne tous les sauvegardes
 def getSauvegardes():
     """
-    Sélectionne l'id de la sauvegarde, l'id du livre, l'id du chapitre et l'id de la feuille d'aventure
+    Sélectionne l'id de la sauvegarde, l'id de la feuille d'aventure, le titre du livre, l'id du chapitre, le no de chapitre,
+    le nombre d'or dans la bourse, l'habilete, l'endurance, l'id du livre et les objets_speciaux
     Arguments:
         Aucun
     Returns:
@@ -248,11 +252,11 @@ def getSauvegardes():
 # Supprime un sauvegarde en fonction de l'id
 def deleteSauvegarde(id):
     """
-    Supprime une sauvegarde
+    Supprime une sauvegarde en fonction de l'id de la sauvegarde
     Arguments:
         id: l'id de la sauvegarde
     Returns:
-        Un tuple avec l'id et le nom de la discipline
+        Aucun
     """
 
     query = """
@@ -277,7 +281,10 @@ def creerFeuilleAventure(habilete, endurance, or_bourse, objets_speciaux):
     """
     Insert une nouvelle ligne avec une nouvelle feuille d'aventure
     Arguments:
-        les objets speciaux, l'habilete, l'endurance et le nombre d'or dans la bourse
+        habilete: l'habilete du joueur
+        endurance: l'endurance du joueur
+        or_bourse: le nombre d'or dans la bourse du joueur
+        objets_speciaux: les objets speciaux du joueur
     Returns:
         l'id de la nouvelle feuille_aventure cree
     """
@@ -305,13 +312,15 @@ def creerFeuilleAventure(habilete, endurance, or_bourse, objets_speciaux):
 
     return resultat
 
+# Fait un lien entre discipline kai et feuille aventure
 def ajouterDisciplinesKai(feuille_aventure_id, discipline_kai_id):
     """
     Insert une nouvelle ligne dans la table feuille_aventure_discipline_kai
     Arguments:
-        l'id de la feuille_aventure et l'id de la discipline kai
+        feuille_aventure_id: l'id de la feuille d'aventure
+        discipline_kai_id: l'id de la discipline kai
     Returns:
-        
+        Aucun
     """
 
     query = """
@@ -332,13 +341,15 @@ def ajouterDisciplinesKai(feuille_aventure_id, discipline_kai_id):
         cursor.close() 
         connection.close()
 
+# Fait un lien entre arme et feuille_aventure
 def ajouterArme(feuille_aventure_id, arme_id):
     """
     Insert une nouvelle ligne dans la table feuille_aventure_arme
     Arguments:
-        l'id de la feuille_aventure et l'id de l'arme
+        feuille_aventure_id: l'id de la feuille d'aventure
+        arme_id: l'id de l'arme
     Returns:
-        
+        Aucun
     """
 
     query = """
@@ -359,13 +370,15 @@ def ajouterArme(feuille_aventure_id, arme_id):
         cursor.close() 
         connection.close()
 
+# Fait un lien entre objets et feuille aventure
 def ajouterLiaisonObjet(feuille_aventure_id, objet_id):
     """
     Insert une nouvelle ligne dans la table feuille_aventure_objet
     Arguments:
-        l'id de la feuille_aventure et l'id de l'objet
+        feuille_aventure_id: l'id de la feuille d'aventure
+        objet_id: l'id de l'objet
     Returns:
-        
+        Aucun
     """
 
     query = """
@@ -379,20 +392,23 @@ def ajouterLiaisonObjet(feuille_aventure_id, objet_id):
         connection = mysql.connect(**db_config)
         cursor = connection.cursor()
         cursor.execute(query, parametres)
-    except mysql.Warning as erreur:
+        connection.commit()
+    except mysql.Error as erreur:
         print(erreur)
     finally:
-        connection.commit()
         cursor.close() 
         connection.close()
 
+# Cree une nouvelle sauvegarde avec tous les informations
 def creerSauvegarde(livre_id, chapitre_id, feuille_aventure_id):
     """
     Insert une nouvelle ligne dans la table sauvegarde
     Arguments:
-        l'id du livre, l'id du chapitre et l'id de la feuille d'aventure
+        livre_id: l'id du livre
+        chapitre_id: le chapitre ou l'utilisateur est rendu
+        feuille_aventure_id: l'id de la feuille aventure
     Returns:
-        
+        l'id de la sauvegarde
     """
 
     query = """
@@ -408,19 +424,23 @@ def creerSauvegarde(livre_id, chapitre_id, feuille_aventure_id):
         cursor = connection.cursor()
         cursor.execute(query, parametres)
         connection.commit()
+        resultat = cursor.lastrowid
     except mysql.Error as erreur:
         print(erreur)
     finally:
         cursor.close() 
         connection.close()
+    return resultat
 
+# Update une sauvegarde
 def update_sauvegarde(sauvegarde_id, chapitre_id):
     """
     Update une sauvegarde deja cree
     Arguments:
-        l'id de la sauvegarde, l'id du livre, l'id du chapitre et l'id de la feuille d'aventure
+        sauvegarde_id: l'id de la sauvegarde
+        chapitre_id: l'id du chapitre
     Returns:
-        
+        Aucun
     """
 
     query = """
@@ -441,7 +461,7 @@ def update_sauvegarde(sauvegarde_id, chapitre_id):
         cursor.close() 
         connection.close()
 
-# Sélectionne le nom et la description d'une discipline kai selon le nom
+# Selectionne l'id du chapitre en fonction de son numero de chapitre
 def getIdChapitre(no_chapitre):
     """
     Sélectionne l'id du chapitre en fonction de son numero
@@ -471,7 +491,7 @@ def getIdChapitre(no_chapitre):
 
     return result
 
-
+# Selectionne les disicplines kai qui ont ete selectionnes dans la creation du personnage
 def getDisciplinesKaiSelectionne(id_feuille_aventure):
     """
     Sélectionne les disciplines kai en fonction de l'id de la feuille aventure
@@ -504,7 +524,7 @@ def getDisciplinesKaiSelectionne(id_feuille_aventure):
 
     return result
 
-
+# Selectionne les armes de la feuille aventure
 def getArmesSelectionne(id_feuille_aventure):
     """
     Sélectionne les armes en fonction de l'id de la feuille aventure
@@ -537,6 +557,7 @@ def getArmesSelectionne(id_feuille_aventure):
 
     return result
 
+# Selectionne tous les armes
 def getArmes():
     """
     Sélectionne tous les armes
@@ -563,6 +584,7 @@ def getArmes():
 
     return result
 
+# Selectionne les objets qui sont liees a un id de feuille d'aventure
 def getObjets(id_feuille_aventure):
     """
     Sélectionne les objets en fonction de l'id de la feuille aventure
@@ -596,7 +618,7 @@ def getObjets(id_feuille_aventure):
     return result
 
 
-# Supprime un sauvegarde en fonction de l'id
+# Supprime un lien entre objet et feuille aventure en fonction de l'id de liaison
 def supprimerObjetFeuilleAventure(id_liaison):
     """
     Supprime un lien entre objet et feuille aventure
@@ -623,6 +645,7 @@ def supprimerObjetFeuilleAventure(id_liaison):
         cursor.close() 
         connection.close()
 
+# Ajout un nouvel objet a la table objet
 def ajouterObjet(nom, description):
     """
     Insert une nouvelle ligne dans la table objet
@@ -653,6 +676,7 @@ def ajouterObjet(nom, description):
         connection.close()
     return resultat
 
+# Selectionne l'id de l'arme en fonction de son nom
 def getIdArme(nom):
     """
     Sélectionne l'id de l'arme en fonction de son id
@@ -682,20 +706,25 @@ def getIdArme(nom):
 
     return result
 
+# Update la feuille aventure avec tous les informations necessaires
 def updateFeuilleAventure(nb_or, habilete, endurance, objets_speciaux, feuille_aventure_id):
     """
     Update une feuille aventure
     Arguments:
-        
+        nb_or: le nombre d'or dans la bourse du joueur
+        habilete: l'habilete du joueur
+        endurance: l'endurance du joueur
+        objets_speciaux: les objets speciaux du joueur
+        feuille_aventure_id: l'id de la feuille d'aventure a modifier
     Returns:
-        
+        Aucun
     """
 
     query = """
         update feuille_aventure set or_bourse = %(nb_or)s,
             habilete = %(habilete)s, endurance = %(endurance)s, 
             objets_speciaux = %(objets_speciaux)s
-            where id = %(feuille_aventure_id)s
+            where id = %(feuille_aventure_id)s;
     """
     parametres = {
         'nb_or' : nb_or,
@@ -714,3 +743,60 @@ def updateFeuilleAventure(nb_or, habilete, endurance, objets_speciaux, feuille_a
     finally:
         cursor.close() 
         connection.close()
+
+# Supprime les liens entre arme et feuille aventure id en fonction de l'id de la feuille d'aventure
+def supprimerLienArme(id_feuille_aventure):
+    """
+    Supprime un lien entre arme et feuille aventure
+    Arguments:
+        id_feuille_aventure : l'id de la feuille aventure
+    Returns:
+        Aucun
+    """
+
+    query = """
+        delete from feuille_aventure_arme where feuille_aventure_id = %(id)s;
+    """
+    parametres = {
+        'id' : id_feuille_aventure
+        }
+    try:
+        connection = mysql.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, parametres)
+        connection.commit()
+    except mysql.Error as erreur:
+        print(erreur)
+    finally:
+        cursor.close() 
+        connection.close()
+
+# Selectionne les informations de la feuille d'aventure avec son id
+def getInfoFeuilleAventure(id_feuille_aventure):
+    """
+    Sélectionne les informations de la feuille d'aventure
+    Arguments:
+        id_feuille_aventure: l'id de la feuille d'aventure
+    Returns:
+        Un tuple avec l'id et le nom de l'arme
+    """
+
+    query = """
+        select habilete, endurance, or_bourse, objets_speciaux from feuille_aventure where id = %(id)s;
+    """
+    parametres = {
+        'id' : id_feuille_aventure
+        }
+    result = ()
+    try:
+        connection = mysql.connect(**db_config)
+        cursor = connection.cursor()
+        cursor.execute(query, parametres)
+        result = cursor.fetchone()
+    except mysql.Error as erreur:
+        print(erreur)
+    finally:
+        cursor.close() 
+        connection.close()
+
+    return result
